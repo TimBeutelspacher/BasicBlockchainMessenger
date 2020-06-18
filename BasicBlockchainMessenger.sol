@@ -1,94 +1,77 @@
 pragma solidity >=0.4.0 <0.7.0;
 
-
-contract Messenger {
+contract BasicBlockchainMessenger{
     
     /*
-        Globale Variablen
+        Variablen
     */
+    
+    // fortlaufende ID der Chats
     uint chatCounter = 0;
-    mapping(uint => chat) public chats;
+    
+    // Liste mit allen chats
+    // Key = fortlaufende (integer) Zahl
+    // Value = Chat-Objekt
+    mapping (uint => chat) private chats;
     
     /*
-        Objekt-Strukturen
+        Struktur des Chat-Objekts
     */
     
-    struct message {
-        string text;
-    }
-    
-    struct chat {
-        uint chatID;
+    //Struktur eines Chats
+    struct chat{
+        
+        // fortlaufendeID für Nachrichten in einem Chat 
         uint messageCounter;
-        uint memberCounter;
-        mapping(uint => message) messages;
-        mapping(uint => address) members;
+        
+        // Liste mit Nachrichten innerhalb eines Chats
+        // Key = fortlaufende (integer) Zahl
+        // Value = Textnachricht (String)
+        mapping (uint => string) messages;
     }
     
-    
     /*
-        Funktionen
+        Funktion um einen Chat zu erstellen
     */
-    
-    // Funktion um einen Chat zu erstellen
     function createChat() public{
         
-        chat memory newChat = chat(chatCounter,0,1);
+        // Neues Chat-Objekt erstellen | messageCounter anfang auf 0 setzen
+        chat memory newChat = chat(0);
+        
+        // erstelltes Chat-Objekt mit dem niedrigsten unbenutzen Key das Chat-Mapping eintragen
         chats[chatCounter] = newChat;
-        chats[chatCounter].members[1] = msg.sender;
         
-        chatCounter += 1;
+        // chatCounter um 1 erhöhen
+        chatCounter++;
     }
     
-    // Funktion um eine Nachricht in einem Chat zu erstellen
-    function createMessage(uint givenChatID, string memory givenText) public {
-        require(givenChatID < chatCounter, "The given ChatID doens't exist yet!");
-        require(isInChat(givenChatID, msg.sender), "You aren't a member of this chat!");
+    /*
+        Funktion zum erstellen einer Nachricht
+    */
+    function createMessage(uint givenChatID, string memory message) public{
         
-        message memory newMessage = message(givenText);
-        chats[givenChatID].messages[chats[givenChatID].messageCounter] = newMessage;
-        chats[givenChatID].messageCounter += 1;
+        // Eine Nachricht soll nur verfasst werden können, wenn der entsprechende Chat bereits besteht
+        require(givenChatID < chatCounter, "Given Chat Id doesn't exist yet!");
+        
+        // Nachricht in dem angegebenen Chat an die erste unbenutze Stelle schreiben
+        chats[givenChatID].messages[chats[givenChatID].messageCounter] = message;
+        
+        // messageCounter um 1 erhöhen, sodass die nächste Nachricht die alte nicht überschreibt
+        chats[givenChatID].messageCounter++;
     }
     
-    function getAllMessages(uint givenChatID) view public returns(string memory) {
-        require(givenChatID < chatCounter, "The given ChatID doens't exist yet!");
-        require(chats[givenChatID].messageCounter != 0, "There isn't a message in this chat!");
-        require(isInChat(givenChatID, msg.sender), "You aren't a member of this chat!");
+    /*
+        Funktion zum aufrufen der letzten Nachricht eines Chats
+    */
+    function getMessage(uint givenChatID) public view returns (string memory){
         
+        // Es können nur Nachrichten von existierenden Chats gelesen werden
+        require(givenChatID < chatCounter, "Given Chat Id doesn't exist yet!");
         
-        string memory output;
-        string memory currentMessage;
+        // Prüfung ob es bereits eine Nachricht in dem angegebenen Chat gibt
+        require(chats[givenChatID].messageCounter > 0, "There isn't a message in this chat!");
         
-        for(uint i = 0; i < chats[givenChatID].messageCounter; i++){
-            
-            currentMessage = chats[givenChatID].messages[i].text;
-
-            
-            output = string(abi.encodePacked(output, currentMessage, '\n'));
-        }
-        return output;
-    }
-    
-    
-    // Funktion um einem Chat beizutreten
-    function joinChat(uint givenChatID) public{
-        require(givenChatID < chatCounter, "The given ChatID doens't exist yet!");
-        require(isInChat(givenChatID, msg.sender) == false, "You are already in this chat!");
-        
-        chats[givenChatID].memberCounter += 1;
-        chats[givenChatID].members[chats[givenChatID].memberCounter] = msg.sender;
-    }
-    
-    //Überprüfung ob eine Adresse Mitglied eines Chats ist.
-    function isInChat(uint givenChatID, address givenMember) view internal returns(bool isMember) {
-        
-        uint memberIndex = 1;
-        while(memberIndex <= chats[givenChatID].memberCounter) {
-            if(chats[givenChatID].members[memberIndex] == givenMember){
-                return true;
-            }
-            memberIndex += 1;
-        }
-        return false;
+        // Ausgabe der letzten Nachricht des angegebenen Chats 
+        return chats[givenChatID].messages[chats[givenChatID].messageCounter - 1];
     }
 }
