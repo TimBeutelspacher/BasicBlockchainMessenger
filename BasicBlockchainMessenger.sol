@@ -72,6 +72,7 @@ contract BasicBlockchainMessenger{
         require(chats[givenChatID].messageCounter > 0, "There isn't a message in this chat!");
         
         // Ausgabe der letzten Nachricht des angegebenen Chats 
+
         return chats[givenChatID].messages[chats[givenChatID].messageCounter - 1];
     }
 }
