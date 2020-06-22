@@ -1,5 +1,5 @@
 # BasicBlockchainMessenger
 Funktionen:
-- Chatraum erstellen
-- Nachrichten schreiben
+- Nachrichten in einem Chat schreiben
+- Nachrichten als Contract abrufen
 - Letzte Nachricht des gegebenen Chatraums ausgeben
