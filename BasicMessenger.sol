@@ -4,16 +4,30 @@ import "./BasicMessage.sol";
 
 contract Messenger{
     
-    Message[] public messages;
+    mapping(uint => Chat) chats;
+    uint chatCounter = 0;
     
-    function createMessage(string memory _message) public {
-        
-        Message message = new Message(_message, msg.sender);
-        messages.push(message);
+    struct Chat {
+        uint chatID;
+        Message[] messages;
     }
     
-    function getLatestMessage() public view returns(string memory) {
-        return messages[messages.length-1].message();
+    function createChat() public {
+        Message[] memory messages;
+        Chat memory chat = Chat(chatCounter, messages);
+        chats[chatCounter] = chat;
+        
+        chatCounter++;
+    }
+    
+    function createMessage(uint _chatID, string memory _message) public {
+        
+        Message message = new Message(_message, msg.sender);
+        chats[_chatID].messages.push(message);
+    }
+    
+    function getLatestMessage(uint _chatID) public view returns(string memory) {
+        return chats[_chatID].messages[chats[_chatID].messages.length-1].message();
     }
     
 }
