@@ -5,11 +5,6 @@ import "./BasicMessage.sol";
 contract Messenger{
     
     Message[] public messages;
-    uint public chatID;
-    
-    constructor(uint _chatID) public {
-        chatID = _chatID;
-    }
     
     function createMessage(string memory _message) public {
         
