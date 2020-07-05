@@ -1,5 +1,4 @@
-# BasicBlockchainMessenger
-Funktionen:
-- Nachrichten in einem Chat schreiben
-- Nachrichten / Chats als Contract abrufen
-- Letzte Nachricht des gegebenen Chatraums ausgeben
+# Basic Blockchain Messenger
+In diesem Repository liegen zwei Solidity Smart Contracts, mit welchen ein einfacher Messenger Dienst auf der Ethereum Blockchain ermöglicht wird. Zum einen gibt es die Datei Chat.sol. Diese stellt einen Chatraum dar und bei jeder Nachricht die in diesem Chat geschrieben wird, wird der Smart Contract Message.sol auf die Blockchain geladen. Dieser enthält die Nachricht, den Autor und die Adresse der vorherigen Nachricht. So sind die Nachrichten untereinander verkettet und man kann die vorherigen Nachrichten alle aufrufen.
+
+Unter https://github.com/TimBeutelspacher/BlockchainMessenger liegen mehrere Smart Contracts mit denen ein Messenger mit deutlich mehr Funktionen ermöglicht wird. Unteranderem können mehrere Chats erzeugt werden, man kann sich einen Nicknamen setzen usw.
